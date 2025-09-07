@@ -25,7 +25,7 @@ public class Course {
 
     public Course(){}
 
-    public Course(String name, Integer creditNumber, String description, Integer weeklyHours, Teacher teacher) {
+    public Course(String name, Integer creditNumber, String description, Integer weeklyHours) {
         this.name = name;
         this.creditNumber = creditNumber;
         this.description = description;
