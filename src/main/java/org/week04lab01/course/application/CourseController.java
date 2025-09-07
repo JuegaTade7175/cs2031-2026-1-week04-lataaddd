@@ -4,8 +4,10 @@ package org.week04lab01.course.application;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.week04lab01.course.domain.Course;
 import org.week04lab01.course.domain.CourseService;
+import org.week04lab01.course.dto.AddStudentToCourseDto;
+import org.week04lab01.course.dto.CourseRequestDto;
+import org.week04lab01.course.dto.CourseResponseDto;
 import org.week04lab01.exceptions.ResourceNotFoundException;
 
 import java.util.List;
@@ -22,50 +24,56 @@ public class CourseController {
     }
 
     @PostMapping
-    public ResponseEntity<Course> createCourse(@RequestBody Course course) {
-        Course createdCourse = courseService.createCourse(course);
-        return ResponseEntity.ok(createdCourse);
+    public ResponseEntity<CourseResponseDto> createCourse(@RequestBody CourseRequestDto course) {
+        return ResponseEntity.ok(
+                courseService.createCourse(course)
+        );
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Course> getCourse(@PathVariable Long id) {
-        Course course = courseService.getCourse(id);
-        return course != null ? ResponseEntity.ok(course) : ResponseEntity.notFound().build();
+    public ResponseEntity<CourseResponseDto> getCourse(@PathVariable Long id) throws ResourceNotFoundException {
+        return ResponseEntity.ok(
+                courseService.getCourse(id)
+        );
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCourse(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCourse(@PathVariable Long id) throws ResourceNotFoundException {
         courseService.deleteCourse(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Course> updateCourse(@PathVariable Long id, @RequestBody Course course) {
-        Course updatedCourse = courseService.updateCourse(id, course);
-        return updatedCourse != null ? ResponseEntity.ok(updatedCourse) : ResponseEntity.notFound().build();
+    @PatchMapping("/{id}")
+    public ResponseEntity<CourseResponseDto> updateCourse(
+            @PathVariable Long id,
+            @RequestBody CourseRequestDto course
+    ) throws ResourceNotFoundException {
+        return ResponseEntity.ok(
+                courseService.updateCourse(id, course)
+        );
     }
 
     @GetMapping
-    public ResponseEntity<List<Course>> getAllCourses() {
-        List<Course> courses = courseService.getAllCourses();
-        return ResponseEntity.ok(courses);
+    public ResponseEntity<List<CourseResponseDto>> getAllCourses() {
+        return ResponseEntity.ok(
+                courseService.getAllCourses()
+        );
     }
 
     @GetMapping("/teacher/{teacherId}")
-    public ResponseEntity<List<Course>> getCoursesByTeacher(@PathVariable Long teacherId) throws ResourceNotFoundException {
-        List<Course> courses = courseService.getCoursesByTeacher(teacherId);
-        return ResponseEntity.ok(courses);
-    }
-
-    @GetMapping("/student/{studentId}")
-    public ResponseEntity<List<Course>> getCoursesByStudent(@PathVariable Long studentId) {
-        List<Course> courses = courseService.getCoursesByStudent(studentId);
-        return ResponseEntity.ok(courses);
+    public ResponseEntity<List<CourseResponseDto>> getCoursesByTeacher(@PathVariable Long teacherId) throws ResourceNotFoundException {
+        return ResponseEntity.ok(
+                courseService.getCoursesByTeacher(teacherId)
+        );
     }
 
     @PostMapping("/{courseId}/students/{studentId}")
-    public ResponseEntity<Void> addStudentToCourse(@PathVariable Long courseId, @PathVariable Long studentId) {
-        courseService.addStudentToCourse(courseId, studentId);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<AddStudentToCourseDto> addStudentToCourse(
+            @PathVariable Long courseId,
+            @PathVariable Long studentId
+    ) throws ResourceNotFoundException {
+        return ResponseEntity.ok(
+                courseService.addStudentToCourse(courseId, studentId)
+        );
     }
 }
