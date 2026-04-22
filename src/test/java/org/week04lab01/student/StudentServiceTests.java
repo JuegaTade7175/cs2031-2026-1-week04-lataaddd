@@ -59,10 +59,8 @@ public class StudentServiceTests {
     void getStudent_shouldReturnStudent_whenStudentExists() {
         when(studentRepository.findById(1L)).thenReturn(Optional.of(sampleStudent));
 
-        // Act
         Student result = studentService.getStudent(1L);
 
-        // Assert
         assertNotNull(result);
         assertEquals(1L, result.getId());
         assertEquals("María", result.getFirstName());
@@ -70,39 +68,24 @@ public class StudentServiceTests {
 
     @Test
     void getStudent_shouldReturnNull_whenStudentNotFound() {
-        // Arrange
         when(studentRepository.findById(99L)).thenReturn(Optional.empty());
 
-        // Act
         Student result = studentService.getStudent(99L);
 
-        // Assert
         assertNull(result);
     }
 
-    // -------------------------------------------------------------------------
-    // deleteStudent
-    // -------------------------------------------------------------------------
-
     @Test
     void deleteStudent_shouldCallDeleteById() {
-        // Arrange
         doNothing().when(studentRepository).deleteById(1L);
 
-        // Act
         studentService.deleteStudent(1L);
 
-        // Assert
         verify(studentRepository, times(1)).deleteById(1L);
     }
 
-    // -------------------------------------------------------------------------
-    // updateStudent
-    // -------------------------------------------------------------------------
-
     @Test
     void updateStudent_shouldReturnUpdatedStudent_whenStudentExists() throws ResourceNotFoundException {
-        // Arrange
         Student updatedData = new Student(
                 "María José",
                 "García",
@@ -114,60 +97,42 @@ public class StudentServiceTests {
         when(studentRepository.findById(1L)).thenReturn(Optional.of(sampleStudent));
         when(studentRepository.save(any(Student.class))).thenReturn(sampleStudent);
 
-        // Act
         Student result = studentService.updateStudent(1L, updatedData);
 
-        // Assert
         assertNotNull(result);
         verify(studentRepository, times(1)).save(sampleStudent);
     }
 
     @Test
     void updateStudent_shouldThrowResourceNotFoundException_whenStudentNotFound() {
-        // Arrange
         when(studentRepository.findById(99L)).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(ResourceNotFoundException.class,
                 () -> studentService.updateStudent(99L, sampleStudent));
         verify(studentRepository, never()).save(any());
     }
 
-    // -------------------------------------------------------------------------
-    // getAllStudents
-    // -------------------------------------------------------------------------
-
     @Test
     void getAllStudents_shouldReturnAllStudents() {
-        // Arrange
         List<Student> students = List.of(
                 sampleStudent,
                 new Student("Pedro", "Ruiz", "pedro@uni.edu", LocalDate.of(1999, 3, 10), new ArrayList<>())
         );
         when(studentRepository.findAll()).thenReturn(students);
 
-        // Act
         List<Student> result = studentService.getAllStudents();
 
-        // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
     }
 
-    // -------------------------------------------------------------------------
-    // getStudentsByCourse
-    // -------------------------------------------------------------------------
-
     @Test
     void getStudentsByCourse_shouldReturnStudents_forGivenCourseId() {
-        // Arrange
         List<Student> students = List.of(sampleStudent);
         when(studentRepository.findByCoursesId(1L)).thenReturn(students);
 
-        // Act
         List<Student> result = studentService.getStudentsByCourse(1L);
 
-        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals("María", result.get(0).getFirstName());
@@ -175,13 +140,10 @@ public class StudentServiceTests {
 
     @Test
     void getStudentsByCourse_shouldReturnEmptyList_whenNoneEnrolled() {
-        // Arrange
         when(studentRepository.findByCoursesId(99L)).thenReturn(new ArrayList<>());
 
-        // Act
         List<Student> result = studentService.getStudentsByCourse(99L);
 
-        // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
